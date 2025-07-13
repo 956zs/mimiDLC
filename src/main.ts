@@ -1,30 +1,34 @@
 import "reflect-metadata";
+import { dirname, importx } from "@discordx/importer";
 import { Client } from "discordx";
 import { IntentsBitField } from "discord.js";
-import { dirname, importx } from "@discordx/importer";
 import { config } from "./config.js";
 
-const client = new Client({
+export const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMessages,
   ],
-  // The importx function below handles finding and loading all commands and events
-  botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
   silent: false,
 });
 
 client.once("ready", async () => {
-  // Make sure all commands are registered
   await client.initApplicationCommands();
-  console.log(">> Bot started");
+  console.log("Bot started.");
 });
 
-async function start() {
+client.on("interactionCreate", (interaction) => {
+  client.executeInteraction(interaction);
+});
+
+async function run() {
   await importx(
-    `${dirname(import.meta.url)}/{commands,events}/**/*.{js,ts}`
+    `${dirname(import.meta.url)}/{commands,events,interactions}/**/*.{js,ts}`
   );
   await client.login(config.botToken);
 }
 
-start();
+run().catch((error) => {
+  console.error("An error occurred during bot startup:", error);
+  process.exit(1);
+});
