@@ -47,7 +47,7 @@ export class Coyote {
     await interaction.reply({
       components: [container],
       //ephemeral: true,
-      flags: MessageFlags.IsComponentsV2,
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
     });
   }
 }
