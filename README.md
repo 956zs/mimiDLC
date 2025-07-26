@@ -19,6 +19,21 @@ await interaction.reply({
 });
 ```
 
+### 組合多個旗標
+
+如果您需要同時使用多個旗標（例如，同時啟用 V2 Components 並將訊息設為臨時訊息），您可以使用位元「或」運算子 (`|`) 來組合它們。
+
+```typescript
+import { MessageFlags } from "discord-api-types/v10";
+
+await interaction.reply({
+  // ... 其他選項
+  flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+});
+```
+
+這樣，回覆的訊息將只對發送該指令的使用者可見。
+
 ### 2. 主容器 `ContainerBuilder`
 
 所有 V2 元件都必須放在一個 `ContainerBuilder` 實例中。您可以把它想像成一個包裹所有內容的頂層容器。
@@ -109,7 +124,7 @@ export class Coyote {
     // 4. 回覆互動，並啟用 V2 Components
     await interaction.reply({
       components: [container], // 將主容器傳入 components
-      flags: MessageFlags.IsComponentsV2, // **啟用 V2 Components 的關鍵**
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral, // **啟用 V2 Components 並設為臨時訊息**
     });
   }
 }
